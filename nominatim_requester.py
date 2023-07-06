@@ -48,3 +48,6 @@ class OSMRequester:
                 if not check_object_in_search_request(real_name=city_name, data=data):
                     f_o.write(f"BAD:{counter} ::: {city_name} ::: {city[1]}:{city[2]}\n")
                     counter += 1
+                    logger.warning(f"CITY {city_name} WITHOUT POLYGON")
+                    continue
+                logger.info(f"CITY {city_name} WITH POLYGON")
