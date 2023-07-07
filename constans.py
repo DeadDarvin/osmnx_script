@@ -12,9 +12,7 @@ GET_LOCALITY_QUERY = """
     nwr(area.a)["place"="city"];
     nwr(area.a)["place"="town"];
     nwr(area.a)["place"="village"];
-    nwr(area.a)["place"="hamlet"];    
-    nwr(area.a)["place"="allotments"];    
-    nwr(area.a)["place"="locality"];    
+    nwr(area.a)["place"="hamlet"];     
     );
     out center;
     """
