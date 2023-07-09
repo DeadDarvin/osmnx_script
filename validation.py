@@ -2,6 +2,9 @@ from custom_logger import get_custom_loger
 import re
 
 logger = get_custom_loger("validation")
+search_request_logger = get_custom_loger("search_validation")
+reverse_request_logger = get_custom_loger("reverse_validation")
+bad_main_point_logger = get_custom_loger("invalid_polygon")
 
 
 def _object_has_polygon(geojson: dict) -> bool:
@@ -64,80 +67,74 @@ def _check_main_point_is_valid(real_lat, real_lon, data) -> bool:
     return True
 
 
-def check_object_in_search_request(real_name: str, data: list) -> bool:
-    """ Общая проверка полученного резульатата """
+def check_objects_in_search_request(real_name: str, lat: str, lon: str, data: list) -> bool:
+    """
+    Принимает список объектов.
+    Если хотя бы один удовлетворяет требованиям,
+    возвращает True. Иначе False.
+    """
     for _object in data:
-        logger.debug(_object)
+        search_request_logger.debug(_object)
 
-        logger.debug("CHECK NAMEDETAILS")
+        search_request_logger.info("CHECK MAIN_POINT_COORDS")
+        if not _check_main_point_is_valid(lat, lon, _object):
+            search_request_logger.error("BAD MAIN POINT")
+            continue
+
+        search_request_logger.debug("CHECK NAMEDETAILS")
         name_details = _object.get("namedetails")
-        logger.debug(name_details)
-        if name_details is not None:
-            if not _check_name_details_is_valid(real_name, name_details):
-                logger.debug("BAD NAMEDETAILS")
-                continue
-        else:
-            display_name = _object.get("display_name")
+        search_request_logger.debug(name_details)
+        if name_details is None:
+            continue
 
-            if display_name is None:
-                logger.debug("HAS NOT DISPLAY NAME")
-                continue
+        if not _check_name_details_is_valid(real_name, name_details):
+            search_request_logger.debug("BAD NAMEDETAILS")
+            continue
 
-            if not _check_display_name_is_valid(real_name, str(display_name)):
-                logger.debug("BAD DISPLAY NAME")
-                continue
-
-        logger.debug("CHECK OSM TYPE")
+        search_request_logger.debug("CHECK OSM TYPE")
         osm_type = _object.get("osm_type")
-        logger.debug(osm_type)
         if osm_type != "way" and osm_type != "relation":
-            logger.debug("BAD OSM TYPE")
+            search_request_logger.debug("BAD OSM TYPE")
             continue
 
-        logger.debug("CHECK COUNTRY_CODE")
-        if not _check_country_code_is_valid(_object):
-            continue
-
-        logger.debug("CHECK GEOJSON")
         geojson = _object.get("geojson")
-        logger.debug(geojson)
+        search_request_logger.debug(geojson)
         if geojson is None:
-            logger.debug("WITHOUT GEOJSON")
+            search_request_logger.debug("WITHOUT GEOJSON")
             continue
 
-        logger.debug("CHECK OBJECT HAS POLYGON")
+        search_request_logger.debug("CHECK OBJECT HAS POLYGON")
         if not _object_has_polygon(geojson):
-            logger.info("WITHOUT POLYGON")
+            search_request_logger.info("WITHOUT POLYGON")
             continue
 
-        logger.debug("OBJECT HAS POLYGON")
+        search_request_logger.debug("OBJECT HAS POLYGON")
         return True
 
     return False
 
 
-def check_object_in_reverse_request(name:str, lat: str, lon: str, data: dict) -> bool:
-    logger.debug(data)
+def check_object_in_reverse_request(lat: str, lon: str, data: dict) -> bool:
+    reverse_request_logger.debug(data)
 
-    logger.debug("CHECK OSM TYPE")
+    reverse_request_logger.debug("CHECK OSM TYPE")
     osm_type = data.get("osm_type")
-    logger.debug(osm_type)
     if osm_type != "way" and osm_type != "relation":
-        logger.debug("BAD OSM TYPE")
+        reverse_request_logger.debug("BAD OSM TYPE")
         return False
 
-    logger.debug("CHECK GEOJSON")
     geojson = data.get("geojson")
-    logger.debug(geojson)
+    reverse_request_logger.debug(geojson)
     if geojson is None:
-        logger.debug("WITHOUT GEOJSON")
+        reverse_request_logger.warning("WITHOUT GEOJSON")
         return False
 
-    logger.info("CHECK OBJECT HAS POLYGON")
+    reverse_request_logger.debug("CHECK OBJECT HAS POLYGON")
     if _object_has_polygon(geojson):
-        logger.info("CHECK MAIN_POINT_COORDS")
+        reverse_request_logger.info("CHECK MAIN_POINT_COORDS")
         if not _check_main_point_is_valid(lat, lon, data):
-            logger.error("INVALID POLYGON IN: ", data)
+            reverse_request_logger.error(f"INVALID POLYGON IN: {data}")
+            bad_main_point_logger.error(f"INVALID MAIN POINT IN {data}")
             return False
     else:
         logger.info("WITHOUT POLYGON")
