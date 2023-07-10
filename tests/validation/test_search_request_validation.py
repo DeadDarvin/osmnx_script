@@ -1,4 +1,4 @@
-from validation import check_objects_in_search_request
+from script.validation import check_objects_in_search_request
 import pytest
 
 

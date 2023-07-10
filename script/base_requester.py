@@ -1,5 +1,5 @@
 import requests
-from custom_logger import get_custom_loger
+from .custom_logger import get_custom_loger
 
 
 logger = get_custom_loger(__name__)

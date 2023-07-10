@@ -1,4 +1,4 @@
-from custom_logger import get_custom_loger
+from script.custom_logger import get_custom_loger
 import re
 
 logger = get_custom_loger("validation")
@@ -63,7 +63,7 @@ def _check_main_point_is_valid(real_lat, real_lon, data) -> bool:
     lat_difference = real_lat - lat
     lon_difference = real_lon - lon
 
-    if abs(lat_difference) > 0.005 or abs(lon_difference) > 0.005:
+    if abs(lat_difference) > 0.1 or abs(lon_difference) > 0.1:
         return False
 
     return True

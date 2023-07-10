@@ -1,8 +1,8 @@
-from custom_logger import get_custom_loger
+from .custom_logger import get_custom_loger
 import requests
-from validation import check_objects_in_search_request, check_object_in_reverse_request
+from .validation import check_objects_in_search_request, check_object_in_reverse_request
 from requests.exceptions import JSONDecodeError, RequestException, ReadTimeout
-from utils import get_cities_list_for_reverse_request
+from .utils import get_cities_list_for_reverse_request
 
 logger = get_custom_loger(__name__)
 

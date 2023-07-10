@@ -1,6 +1,6 @@
-from base_requester import Requester
-from nominatim_requester import OSMRequester
-from constans import BASE_URL, GET_LOCALITY_QUERY
+from script.base_requester import Requester
+from script.nominatim_requester import OSMRequester
+from script.constans import BASE_URL, GET_LOCALITY_QUERY
 
 
 def main():

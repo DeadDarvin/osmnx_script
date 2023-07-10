@@ -1,4 +1,4 @@
-from validation import _check_main_point_is_valid
+from script.validation import _check_main_point_is_valid
 import pytest
 
 

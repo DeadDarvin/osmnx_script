@@ -1,4 +1,4 @@
-from validation import check_object_in_reverse_request
+from script.validation import check_object_in_reverse_request
 import pytest
 
 
