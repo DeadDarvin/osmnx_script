@@ -57,14 +57,21 @@ def _check_name_details_is_valid(real_name: str, namedetails: dict) -> bool:
 
 def _check_main_point_is_valid(real_lat, real_lon, data) -> bool:
 
+    flag = False
     lat, lon = float(data.get("lat")), float(data.get("lon"))
 
-    if int(lat) != int(float(real_lat)):
-        return False
-    if int(lon) != int(float(real_lon)):
-        return False
+    #  Check lat
+    if int(lat) - 1 <= int(float(real_lat)) <= int(lat) + 1:
+        flag = True
 
-    return True
+    if not flag:
+        return flag
+
+    # Check lon after lat
+    if int(lon) - 1 <= int(float(real_lon)) <= int(lon) + 1:
+        return True
+    else:
+        return False
 
 
 def check_objects_in_search_request(real_name: str, lat: str, lon: str, data: list) -> bool:

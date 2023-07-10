@@ -28,11 +28,15 @@ class OSMRequester:
                "zoom=15&addressdetails=1&polygon_geojson=1"
 
     @staticmethod
-    def _get_city_object_from_request(request_url: str) -> list | dict:
+    def _get_city_object_from_request(request_url: str):
 
         try:
             response = requests.get(request_url, timeout=2)
             data = response.json()
+            if isinstance(data, dict):
+                if data.get("error") is not None:
+                    return
+
             return data
 
         except JSONDecodeError:
