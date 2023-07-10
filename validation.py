@@ -61,14 +61,14 @@ def _check_main_point_is_valid(real_lat, real_lon, data) -> bool:
     lat, lon = float(data.get("lat")), float(data.get("lon"))
 
     #  Check lat
-    if int(lat) - 1 <= int(float(real_lat)) <= int(lat) + 1:
+    if int(lat) - 3 <= int(float(real_lat)) <= int(lat) + 3:
         flag = True
 
     if not flag:
         return flag
 
     # Check lon after lat
-    if int(lon) - 1 <= int(float(real_lon)) <= int(lon) + 1:
+    if int(lon) - 3 <= int(float(real_lon)) <= int(lon) + 3:
         return True
     else:
         return False
