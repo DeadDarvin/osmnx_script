@@ -14,7 +14,7 @@ def main():
     osm_requester.reverse_request()
 
 
-# def test():
+# def main2():
 #     osm_requester = OSMRequester([("Ораз ата ауылы", "41.3719735", "68.9994411"), ], "test.txt", "test2.txt")
 #     osm_requester.search_request()
 #     # print(osm_requester._get_city_object_from_request("https://nominatim.openstreetmap.org/search?"
