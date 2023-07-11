@@ -8,7 +8,8 @@ def main():
     osm_requester = OSMRequester(
         cities_list,
         search_filename="server_search_request.txt",
-        reverse_filename="server_reverse_request.txt"
+        reverse_filename_with="reverse_request_with_polygon.txt",
+        reverse_filename_without="reverse_request_without_polygon.txt"
     )
     osm_requester.search_request()
     osm_requester.reverse_request()

@@ -63,7 +63,7 @@ def _check_main_point_is_valid(real_lat, real_lon, data) -> bool:
     lat_difference = real_lat - lat
     lon_difference = real_lon - lon
 
-    if abs(lat_difference) > 0.1 or abs(lon_difference) > 0.1:
+    if abs(lat_difference) > 0.3 or abs(lon_difference) > 0.3:
         return False
 
     return True

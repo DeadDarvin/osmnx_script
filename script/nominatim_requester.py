@@ -9,11 +9,18 @@ logger = get_custom_loger(__name__)
 
 class OSMRequester:
 
-    def __init__(self, cities_list: list, search_filename: str, reverse_filename: str):
+    def __init__(
+            self,
+            cities_list: list,
+            search_filename: str,
+            reverse_filename_with: str,
+            reverse_filename_without: str
+    ):
         self.cities_list = cities_list
         self.cities_list_length = len(cities_list)
         self.search_filename = search_filename
-        self.reverse_filename = reverse_filename
+        self.reverse_filename_with_polygon = reverse_filename_with
+        self.reverse_filename_without_polygon = reverse_filename_without
 
     @staticmethod
     def get_search_url(city: str):
@@ -80,23 +87,27 @@ class OSMRequester:
         counter = 1
         gen_counter = 1
 
-        with open(self.reverse_filename, "w") as f_o:
-            for city in cities_list:
-                name, lat, lon = city[0], city[1], city[2]
-                reverse_url = self.get_reverse_url(lat, lon)
+        for city in cities_list:
+            name, lat, lon = city[0], city[1], city[2]
+            reverse_url = self.get_reverse_url(lat, lon)
 
-                data = self._get_city_object_from_request(reverse_url)
-                if data is None:
-                    logger.error(f"BAD REQUEST ::: {gen_counter}/{length}")
-                    gen_counter += 1
-                    continue
-
-                logger.info(f"CHECK CITY: {name}")
-                if not check_object_in_reverse_request(lat, lon, data=data):
-                    f_o.write(f"BAD:{counter} ::: {name} ::: {lat}:{lon}\n")
-                    counter += 1
-                    logger.warning(f"CITY {name} WITHOUT POLYGON ::: {gen_counter}/{length}")
-                    gen_counter += 1
-                    continue
-                logger.info(f"CITY {name} WITH POLYGON ::: {gen_counter}/{length}")
+            data = self._get_city_object_from_request(reverse_url)
+            if data is None:
+                logger.error(f"BAD REQUEST ::: {gen_counter}/{length}")
                 gen_counter += 1
+                continue
+
+            logger.info(f"CHECK CITY: {name}")
+            if not check_object_in_reverse_request(lat, lon, data=data):
+                with open(self.reverse_filename_without_polygon, "a") as f_o:
+                    f_o.write(f"BAD:{counter} ::: {name} ::: {lat}:{lon}\n")
+                counter += 1
+                logger.warning(f"CITY {name} WITHOUT POLYGON ::: {gen_counter}/{length}")
+                gen_counter += 1
+                continue
+
+            with open(self.reverse_filename_with_polygon, "a") as f_o:
+                f_o.write(f"GOOD:{counter} ::: {name} ::: {lat}:{lon}\n")
+
+            logger.info(f"CITY {name} WITH POLYGON ::: {gen_counter}/{length}")
+            gen_counter += 1
